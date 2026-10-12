@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pediatric Dentistry Exam 2 — Practice Test</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0c0e14;
+    --surface: #13151f;
+    --surface2: #1a1d2b;
+    --surface3: #20243a;
+    --border: #272b40;
+    --border2: #333858;
+    --accent: #6ee7b7;
+    --accent2: #818cf8;
+    --accent3: #fb923c;
+    --correct: #34d399;
+    --wrong: #f87171;
+    --text: #e2e8f8;
+    --muted: #6b7494;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+    --display: 'Syne', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  .progress-wrap {
+    height: 2px;
+    background: var(--border);
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 300;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    backdrop-filter: blur(8px);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .header-left h1 {
+    font-family: var(--display);
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .header-left .subtitle {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-top: 3px;
+    letter-spacing: 0.05em;
+  }
+  .score-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .score-pill {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .score-pill span { color: var(--accent); font-weight: 500; }
+  .reset-btn-header {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .reset-btn-header:hover { border-color: var(--accent3); color: var(--accent3); }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px 100px;
+  }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 56px 0 22px;
+  }
+  .section-label:first-of-type { margin-top: 0; }
+  .section-num {
+    font-family: var(--display);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--bg);
+    background: var(--accent2);
+    padding: 3px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: var(--display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.01em;
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin-bottom: 12px;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .q-card:hover { border-color: var(--border2); }
+  .q-card.answered-correct {
+    border-color: rgba(52,211,153,0.45);
+    box-shadow: 0 0 0 1px rgba(52,211,153,0.12) inset;
+  }
+  .q-card.answered-wrong {
+    border-color: rgba(248,113,113,0.45);
+    box-shadow: 0 0 0 1px rgba(248,113,113,0.1) inset;
+  }
+
+  .q-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .q-num {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    padding: 2px 9px;
+    border-radius: 5px;
+  }
+
+  .q-text {
+    font-size: 0.93rem;
+    line-height: 1.65;
+    color: var(--text);
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 7px; }
+
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    width: 100%;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 0.87rem;
+    font-weight: 300;
+    line-height: 1.55;
+  }
+  .opt:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(110,231,183,0.06);
+  }
+  .opt:disabled { cursor: default; }
+
+  .opt-letter {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--muted);
+    background: var(--surface3);
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.15s;
+  }
+
+  .opt.correct-ans { border-color: var(--correct) !important; background: rgba(52,211,153,0.1) !important; }
+  .opt.correct-ans .opt-letter { background: var(--correct); color: #0c0e14; }
+  .opt.wrong-ans { border-color: var(--wrong) !important; background: rgba(248,113,113,0.09) !important; }
+  .opt.wrong-ans .opt-letter { background: var(--wrong); color: #0c0e14; }
+  .opt.reveal-correct { border-color: rgba(52,211,153,0.35) !important; background: rgba(52,211,153,0.05) !important; }
+  .opt.reveal-correct .opt-letter { color: var(--correct); background: rgba(52,211,153,0.15); }
+
+  .feedback {
+    margin-top: 12px;
+    padding: 11px 16px;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    line-height: 1.6;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct-fb { background: rgba(52,211,153,0.09); border: 1px solid rgba(52,211,153,0.28); color: #86efcb; }
+  .feedback.wrong-fb { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.24); color: #fca5a5; }
+  .feedback strong { font-weight: 500; }
+
+
+  .q-tag {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    color: var(--accent3);
+    border: 1px solid rgba(251,146,60,0.35);
+    padding: 2px 9px;
+    border-radius: 5px;
+  }
+  .opt.multi .opt-letter { border-radius: 50%; }
+  .opt.selected { border-color: var(--accent2); background: rgba(129,140,248,0.1); }
+  .opt.selected .opt-letter { background: var(--accent2); color: #0c0e14; }
+  .check-btn {
+    margin-top: 12px;
+    background: transparent;
+    border: 1px solid var(--accent2);
+    color: var(--accent2);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+  .check-btn:disabled { opacity: 0.4; cursor: default; }
+  .check-btn:not(:disabled):hover { background: rgba(129,140,248,0.1); }
+  .review-bar { margin-top: 40px; text-align: center; }
+  .review-btn {
+    background: transparent;
+    border: 1px solid var(--wrong);
+    color: var(--wrong);
+    border-radius: 8px;
+    padding: 12px 22px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    cursor: pointer;
+    width: 100%;
+    max-width: 360px;
+  }
+  .review-btn:not(:disabled):hover { background: rgba(248,113,113,0.08); }
+  .review-btn:disabled { opacity: 0.35; cursor: default; }
+  .review-note { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); margin-top: 8px; }
+  .review-banner {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+    background: rgba(248,113,113,0.07);
+    border: 1px solid rgba(248,113,113,0.3);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 24px;
+    font-family: var(--mono); font-size: 0.78rem; color: #fca5a5;
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 14px 16px; }
+    .container { padding: 32px 14px 80px; }
+    .q-card { padding: 16px 16px; }
+    .header-left h1 { font-size: 0.9rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
+
+<header>
+  <div class="header-left">
+    <h1>Pediatric Dentistry — Exam 2 Practice Test</h1>
+    <div class="subtitle">Primary Dentition &amp; Occlusion · Eruption &amp; Arch Development · Caries &amp; Prevention · Pulp Therapy &amp; Infant Oral Health</div>
+  </div>
+  <div class="score-bar">
+    <div class="score-pill">Answered: <span id="answeredCount">0</span> / <span id="totalCount">0</span></div>
+    <div class="score-pill">Score: <span id="scoreCount">0</span> correct</div>
+    <button class="reset-btn-header" onclick="resetAll()">↺ Reset</button>
+    <button class="reset-btn-header" onclick="shuffleAll()">⇄ Reset &amp; Shuffle</button>
+  </div>
+</header>
+
+<div class="container" id="examContainer"></div>
+
+<script>
+const sections = [
+ {
+  "label": "Primary Dentition, Spacing, & Occlusion",
+  "questions": [
+   {
+    "id": "q01",
+    "text": "Which permanent teeth develop from primary bud predecessors?",
+    "options": [
+     "First molars",
+     "Canines",
+     "Incisors",
+     "Premolars",
+     "Second molars",
+     "Third molars"
+    ],
+    "correct": [
+     1,
+     2,
+     3
+    ],
+    "multi": true
+   },
+   {
+    "id": "q02",
+    "text": "Permanent mandibular incisor buds lie ______ to the primary incisors.",
+    "options": [
+     "Inferior and labial",
+     "Inferior and lingual",
+     "Superior and lingual",
+     "Superior and labial"
+    ],
+    "correct": 1
+   },
+   {
+    "id": "q03",
+    "text": "At birth, which primary teeth show crown evidence?",
+    "options": [
+     "Only the primary incisors",
+     "Only the primary incisors and first molars",
+     "All primary teeth except the second molars",
+     "All primary teeth"
+    ],
+    "correct": 3
+   },
+   {
+    "id": "q04",
+    "text": "At birth, which permanent tooth is also calcifying?",
+    "options": [
+     "Permanent central incisor",
+     "Permanent first molar",
+     "Permanent canine",
+     "Permanent first premolar"
+    ],
+    "correct": 1
+   },
+   {
+    "id": "q05",
+    "text": "Baume Type I arches are characterized by:",
+    "options": [
+     "Spaces between the primary teeth",
+     "No spaces between the primary teeth",
+     "Spaces only in the primate space regions",
+     "Crowding of the primary incisors"
+    ],
+    "correct": 0
+   },
+   {
+    "id": "q06",
+    "text": "Baume Type II arches are characterized by:",
+    "options": [
+     "Spaces between the primary teeth",
+     "No spaces between the primary teeth",
+     "Spaces only in the primate space regions",
+     "Generalized diastemas in the posterior segments"
+    ],
+    "correct": 1
+   },
+   {
+    "id": "q07",
+    "text": "In the MAXILLARY arch, primate spacing occurs between the:",
+    "options": [
+     "Central and lateral incisors",
+     "Lateral incisor and canine",
+     "Canine and first primary molar",
+     "First and second primary molars"
+    ],
+    "correct": 1
+   },
+   {
+    "id": "q08",
+    "text": "In the MANDIBULAR arch, primate spacing occurs between the:",
+    "options": [
+     "Canine and first primary molar",
+     "Lateral incisor and canine",
+     "Central and lateral incisors",
+     "First and second primary molars"
+    ],
+    "correct": 0
+   },
+   {
+    "id": "q09",
+    "text": "The relationship of which maxillary and mandibular teeth is the best indicator of the maxilla-mandible relationship?",
+    "options": [
+     "Central incisors",
+     "First primary molars",
+     "Second primary molars",
+     "Canines"
+    ],
+    "correct": 3
+   },
+   {
+    "id": "q10",
+    "text": "Infants and younger children typically exhibit what facial profile?",
+    "options": [
+     "Straight",
+     "Convex",
+     "Concave",
+     "Flat (orthognathic)"
+    ],
+    "correct": 1
+   },
+   {
+    "id": "q11",
+    "text": "Overbite quantifies:",
+    "options": [
+     "The horizontal distance between the maxillary and mandibular incisors",
+     "The percentage of the mandibular incisor clinical crown covered by the maxillary incisors",
+     "The percentage of the maxillary incisor clinical crown covered by the mandibular incisors",
+     "The vertical gap between incisal edges when the molars are in occlusion"
+    ],
+    "correct": 1
+   },
+   {
+    "id": "q12",
+    "text": "Ideal primary occlusion features which terminal plane relationship of the primary molars?",
+    "options": [
+     "Mesial step to flush (straight) terminal plane",
+     "Distal step terminal plane",
+     "Flush to distal step terminal plane",
+     "Exaggerated (large) mesial step only"
+    ],
+    "correct": 0
+   },
+   {
+    "id": "q13",
+    "text": "Class III molar relationships occur in approximately what percentage of the population?",
+    "options": [
+     "5–8%",
+     "1–3%",
+     "10–15%",
+     "20–25%"
+    ],
+    "correct": 1
+   },
+   {
+    "id": "q14",
+    "text": "Which permanent teeth do NOT develop from primary tooth bud predecessors?",
+    "options": [
+     "Permanent incisors",
+     "Permanent canines",
+     "Permanent molars",
+     "Permanent premolars"
+    ],
+    "correct": 2
+   }
+  ]
+ },
+ {
+  "label": "Eruption Chronology & Arch Development",
+  "questions": [
+   {
+    "id": "q15",
+    "text": "What is the usual primary tooth eruption sequence?",
+    "options": [
+     "Central incisor, lateral incisor, canine, first primary molar, second primary molar",
+     "Lateral incisor, central incisor, first primary molar, canine, second primary molar",
+     "Central incisor, lateral incisor, first primary molar, canine, second primary molar",
+     "Central incisor, first primary molar, lateral incisor, canine, second primary molar"
+    ],
+    "correct": 2
+   },
+   {
+    "id": "q16",
+    "text": "In the MAXILLARY arch, what is the eruption sequence of the canine and premolars?",
+    "options": [
+     "Canine, first premolar, second premolar",
+     "First premolar, canine, second premolar",
+     "First premolar, second premolar, canine",
+     "Second premolar, first premolar, canine"
+    ],
+    "correct": 2
+   },
+   {
+    "id": "q17",
+    "text": "In the MANDIBULAR arch, what is the eruption sequence of the canine and premolars?",
+    "options": [
+     "Canine, first premolar, second premolar",
+     "First premolar, second premolar, canine",
+     "First premolar, canine, second premolar",
+     "Canine, second premolar, first premolar"
+    ],
+    "correct": 0
+   },
+   {
+    "id": "q18",
+    "text": "Permanent mandibular canines ideally erupt ______ the mandibular premolars.",
+    "options": [
+     "After",
+     "At the same time as",
+     "Between the first and second",
+     "Before"
+    ],
+    "correct": 3
+   },
+   {
+    "id": "q19",
+    "text": "At what age is a child expected to have 12 erupted primary teeth and 12 permanent teeth?",
+    "options": [
+     "8.5 years",
+     "6 years",
+     "10.5 years",
+     "12 years"
+    ],
+    "correct": 0
+   },
+   {
+    "id": "q20",
+    "text": "A child at 8.5 years is expected to have how many erupted teeth?",
+    "options": [
+     "12 primary teeth and 12 permanent teeth",
+     "8 primary teeth and 16 permanent teeth",
+     "16 primary teeth and 8 permanent teeth",
+     "20 primary teeth and 4 permanent teeth"
+    ],
+    "correct": 0
+   },
+   {
+    "id": "q21",
+    "text": "Supervision of occlusion is most critical at what ages?",
+    "options": [
+     "7–10 years",
+     "3–6 years",
+     "11–14 years",
+     "15–18 years"
+    ],
+    "correct": 0
+   },
+   {
+    "id": "q22",
+    "text": "Leeway space is defined as:",
+    "options": [
+     "The space between the primary maxillary lateral incisor and canine",
+     "The space created by eruption of the permanent first molars",
+     "The size differential between the posterior primary teeth and their permanent successors",
+     "The size differential between the primary and permanent incisors"
+    ],
+    "correct": 2
+   },
+   {
+    "id": "q23",
+    "text": "Which PRIMARY teeth make up the posterior primary segment used to calculate leeway space?",
+    "options": [
+     "Permanent first molars",
+     "Primary first molars",
+     "Primary canines",
+     "Primary lateral incisors",
+     "Primary central incisors",
+     "Primary second molars"
+    ],
+    "correct": [
+     1,
+     2,
+     5
+    ],
+    "multi": true
+   },
+   {
+    "id": "q24",
+    "text": "Which PERMANENT successors are compared to the primary teeth in leeway space?",
+    "options": [
+     "Second premolars",
+     "First premolars",
+     "Canines",
+     "Lateral incisors",
+     "Second molars",
+     "First molars"
+    ],
+    "correct": [
+     0,
+     1,
+     2
+    ],
+    "multi": true
+   },
+   {
+    "id": "q25",
+    "text": "A distal step in the primary dentition generally develops into what permanent molar relationship?",
+    "options": [
+     "Class I",
+     "Class III",
+     "Class II",
+     "End-to-end that self-corrects to Class I"
+    ],
+    "correct": 2
+   },
+   {
+    "id": "q26",
+    "text": "In the early mixed dentition, the permanent first molars commonly erupt into what relationship?",
+    "options": [
+     "Class I",
+     "End-to-end",
+     "Class II",
+     "Class III"
+    ],
+    "correct": 1
+   },
+   {
+    "id": "q27",
+    "text": "Crowding in the primary dentition predicts incisor crowding in the mixed dentition what percentage of the time?",
+    "options": [
+     "70%",
+     "50%",
+     "100%",
+     "30%"
+    ],
+    "correct": 2
+   },
+   {
+    "id": "q28",
+    "text": "What determines the future anterior-posterior positions of the permanent first molars?",
+    "options": [
+     "The presence of primate spacing",
+     "The amount of leeway space",
+     "The canine relationship",
+     "The terminal plane of the primary second molars"
+    ],
+    "correct": 3
+   },
+   {
+    "id": "q29",
+    "text": "Crowding in the primary dentition predicts:",
+    "options": [
+     "Spacing in the permanent dentition",
+     "Incisor crowding in the mixed dentition",
+     "A Class II molar relationship",
+     "Crossbite of the permanent first molars"
+    ],
+    "correct": 1
+   }
+  ]
+ },
+ {
+  "label": "Dental Caries, Microbiology, & Prevention",
+  "questions": [
+   {
+    "id": "q30",
+    "text": "What is the principal causative factor for the initiation of dental caries?",
+    "options": [
+     "Streptococcus mutans",
+     "Lactobacillus acidophilus",
+     "Actinomyces viscosus",
+     "Candida albicans"
+    ],
+    "correct": 0
+   },
+   {
+    "id": "q31",
+    "text": "Vertical transmission of S. mutans occurs primarily from the:",
+    "options": [
+     "Siblings",
+     "Mother/primary caregiver",
+     "Daycare peers",
+     "Father"
+    ],
+    "correct": 1
+   },
+   {
+    "id": "q32",
+    "text": "Early childhood caries earliest and most severely affects the:",
+    "options": [
+     "Mandibular incisors",
+     "Primary first molars",
+     "Primary second molars",
+     "Maxillary incisors"
+    ],
+    "correct": 3
+   },
+   {
+    "id": "q33",
+    "text": "High S. mutans levels have what effect on caries?",
+    "options": [
+     "Decrease caries prevalence and risk",
+     "Have no effect on caries risk",
+     "Increase caries prevalence and risk",
+     "Increase prevalence but not risk"
+    ],
+    "correct": 2
+   },
+   {
+    "id": "q34",
+    "text": "Enamel demineralization occurs at what critical pH when sucrose is ingested?",
+    "options": [
+     "4.5",
+     "6.5",
+     "7.0",
+     "5.5"
+    ],
+    "correct": 3
+   },
+   {
+    "id": "q35",
+    "text": "High-risk dietary practices are established by what age?",
+    "options": [
+     "12 months",
+     "6 months",
+     "24 months",
+     "36 months"
+    ],
+    "correct": 0
+   },
+   {
+    "id": "q36",
+    "text": "Which of the following are caries risk factors?",
+    "options": [
+     "Caregiver with active caries",
+     "Visible plaque",
+     "Frequent sugary snacks/beverages (>3x/day)",
+     "Enamel defects",
+     "Twice-daily brushing with fluoride toothpaste",
+     "Living in a community with optimally fluoridated water"
+    ],
+    "correct": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "multi": true
+   },
+   {
+    "id": "q37",
+    "text": "Sugary snacks/beverages become a caries risk factor at what frequency?",
+    "options": [
+     "More than once per day",
+     "More than 5 times per week",
+     "More than 7 times per week",
+     "More than 3 times per day"
+    ],
+    "correct": 3
+   },
+   {
+    "id": "q38",
+    "text": "What is the typical fluoride concentration of toothpaste?",
+    "options": [
+     "1000 ppm",
+     "500 ppm",
+     "5000 ppm",
+     "22,600 ppm"
+    ],
+    "correct": 0
+   },
+   {
+    "id": "q39",
+    "text": "Which fluoride mechanism has the most important impact?",
+    "options": [
+     "Systemic",
+     "Pre-eruptive",
+     "Dietary supplementation",
+     "Topical"
+    ],
+    "correct": 3
+   },
+   {
+    "id": "q40",
+    "text": "Fluoride supplementation is appropriate when:",
+    "options": [
+     "The patient has high caries risk",
+     "Water contains <0.6 ppm F",
+     "Other fluoride ingestion sources are deficient",
+     "The patient already receives adequate fluoride from other sources",
+     "The patient has low caries risk",
+     "Water contains >0.6 ppm F"
+    ],
+    "correct": [
+     0,
+     1,
+     2
+    ],
+    "multi": true
+   },
+   {
+    "id": "q41",
+    "text": "Below what community water fluoride level is supplementation considered?",
+    "options": [
+     "<0.3 ppm F",
+     "<0.6 ppm F",
+     "<1.0 ppm F",
+     "<1.2 ppm F"
+    ],
+    "correct": 1
+   },
+   {
+    "id": "q42",
+    "text": "What is the probable toxic dose (acute fluoride toxicity)?",
+    "options": [
+     "1.0 mg/kg",
+     "15 mg/kg",
+     "5.0 mg/kg",
+     "32 mg/kg"
+    ],
+    "correct": 2
+   },
+   {
+    "id": "q43",
+    "text": "For a child UNDER 3 years, how much fluoride toothpaste should be used?",
+    "options": [
+     "Pea-sized amount",
+     "Half-inch strip",
+     "No toothpaste",
+     "Rice-grain size smear"
+    ],
+    "correct": 3
+   },
+   {
+    "id": "q44",
+    "text": "For a child 3–6 years old, how much fluoride toothpaste should be used?",
+    "options": [
+     "Rice-grain size smear",
+     "Half-inch strip",
+     "Pea-sized amount",
+     "Full-length strip"
+    ],
+    "correct": 2
+   }
+  ]
+ },
+ {
+  "label": "Pulp Therapy & Infant Oral Health",
+  "questions": [
+   {
+    "id": "q45",
+    "text": "What is the most significant factor in pulp reaction?",
+    "options": [
+     "Type of restorative material used",
+     "Patient age",
+     "Dentin thickness remaining over the pulp",
+     "Size of the carious lesion's outline form"
+    ],
+    "correct": 2
+   },
+   {
+    "id": "q46",
+    "text": "What are the best diagnostic methods for pulp status in primary teeth?",
+    "options": [
+     "Thermal (cold) testing",
+     "Electric pulp testing",
+     "Clinical assessment/examination",
+     "History of pain",
+     "Pulse oximetry"
+    ],
+    "correct": [
+     2,
+     3
+    ],
+    "multi": true
+   },
+   {
+    "id": "q47",
+    "text": "A history of spontaneous night pain indicates:",
+    "options": [
+     "Reversible pulpitis",
+     "Normal pulp",
+     "Irreversible pulpitis",
+     "Dentin hypersensitivity"
+    ],
+    "correct": 2
+   },
+   {
+    "id": "q48",
+    "text": "Which of the following are vital pulp therapies?",
+    "options": [
+     "Pulpotomy",
+     "Indirect pulp treatment",
+     "Direct pulp cap",
+     "Protective base/liner",
+     "Pulpectomy",
+     "Extraction"
+    ],
+    "correct": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "multi": true
+   },
+   {
+    "id": "q49",
+    "text": "Which of the following is NOT a vital pulp therapy?",
+    "options": [
+     "Pulpotomy",
+     "Pulpectomy",
+     "Direct pulp cap",
+     "Indirect pulp treatment"
+    ],
+    "correct": 1
+   },
+   {
+    "id": "q50",
+    "text": "Pulpotomy indications EXCLUDE:",
+    "options": [
+     "Carious pulp exposure in a vital tooth",
+     "Mechanical pulp exposure",
+     "Hemorrhage that is controlled after amputation",
+     "Purulent material in the pulp chamber"
+    ],
+    "correct": 3
+   },
+   {
+    "id": "q51",
+    "text": "Which findings EXCLUDE a diagnosis of reversible pulpitis?",
+    "options": [
+     "Provoked pain that subsides when the stimulus is removed",
+     "Swelling",
+     "No history of spontaneous pain",
+     "Abscess",
+     "Pain with sweets or cold"
+    ],
+    "correct": [
+     1,
+     3
+    ],
+    "multi": true
+   },
+   {
+    "id": "q52",
+    "text": "Indirect pulp treatment is performed for:",
+    "options": [
+     "Deep carious lesions approximating the pulp",
+     "Frank carious pulp exposures",
+     "Necrotic pulps",
+     "Teeth with a periapical abscess"
+    ],
+    "correct": 0
+   },
+   {
+    "id": "q53",
+    "text": "A dental home should be established no later than what age?",
+    "options": [
+     "12 months",
+     "6 months",
+     "24 months",
+     "36 months"
+    ],
+    "correct": 0
+   },
+   {
+    "id": "q54",
+    "text": "Infant oral health exams must address:",
+    "options": [
+     "Orthodontic records",
+     "Dental development",
+     "Non-nutritive habits",
+     "Sealant placement",
+     "Full-mouth radiographs",
+     "Diet/nutrition"
+    ],
+    "correct": [
+     1,
+     2,
+     5
+    ],
+    "multi": true
+   },
+   {
+    "id": "q55",
+    "text": "What is the only safe drink before bedtime?",
+    "options": [
+     "Milk",
+     "Diluted juice",
+     "Formula",
+     "Water"
+    ],
+    "correct": 3
+   }
+  ]
+ }
+];
+
+let view = sections;
+let fullView = sections;   // the full test (original or shuffled) to return to after reviewing
+let reviewing = false;
+let missed = {};           // question id -> true for questions answered incorrectly this round
+let answered = {};
+let selected = {};
+let scores = { correct: 0, total: 0 };
+const letters = ['A','B','C','D','E','F','G','H'];
+
+function buildExam() {
+  const container = document.getElementById('examContainer');
+  container.innerHTML = '';
+  let totalQ = 0;
+
+  if (reviewing) {
+    const banner = document.createElement('div');
+    banner.className = 'review-banner';
+    banner.innerHTML = '<span>Reviewing your incorrect answers</span><button class="reset-btn-header" onclick="exitReview()">← Back to full test</button>';
+    container.appendChild(banner);
+  }
+
+  view.forEach((section, si) => {
+    const secDiv = document.createElement('div');
+    secDiv.className = 'section-label';
+    secDiv.innerHTML = `<span class="section-num">Set ${section.num || si + 1}</span><span class="section-title"></span><div class="section-line"></div>`;
+    secDiv.querySelector('.section-title').textContent = section.label;
+    container.appendChild(secDiv);
+
+    section.questions.forEach((q) => {
+      totalQ++;
+      const card = document.createElement('div');
+      card.className = 'q-card';
+      card.id = 'card-' + q.id;
+
+      const meta = document.createElement('div');
+      meta.className = 'q-meta';
+      meta.innerHTML = `<span class="q-num">Q${totalQ}</span>` + (q.multi ? '<span class="q-tag">Select all that apply</span>' : '');
+      card.appendChild(meta);
+
+      const qText = document.createElement('div');
+      qText.className = 'q-text';
+      qText.textContent = q.text;
+      card.appendChild(qText);
+
+      const optWrap = document.createElement('div');
+      optWrap.className = 'options';
+      q.options.forEach((opt, oi) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt' + (q.multi ? ' multi' : '');
+        btn.id = 'opt-' + q.id + '-' + oi;
+        btn.innerHTML = `<span class="opt-letter">${letters[oi]}</span><span></span>`;
+        btn.lastChild.textContent = opt;
+        btn.addEventListener('click', () => q.multi ? toggleOpt(q, oi) : answerQ(q, oi));
+        optWrap.appendChild(btn);
+      });
+      card.appendChild(optWrap);
+
+      if (q.multi) {
+        const check = document.createElement('button');
+        check.className = 'check-btn';
+        check.id = 'check-' + q.id;
+        check.textContent = 'Check answer';
+        check.disabled = true;
+        check.addEventListener('click', () => checkMulti(q));
+        card.appendChild(check);
+      }
+
+      const feedback = document.createElement('div');
+      feedback.className = 'feedback';
+      feedback.id = 'fb-' + q.id;
+      card.appendChild(feedback);
+
+      container.appendChild(card);
+    });
+  });
+
+  const bar = document.createElement('div');
+  bar.className = 'review-bar';
+  bar.innerHTML = '<button class="review-btn" id="reviewBtn" onclick="reviewIncorrect()" disabled></button><div class="review-note" id="reviewNote"></div>';
+  container.appendChild(bar);
+
+  document.getElementById('totalCount').textContent = totalQ;
+  scores.total = totalQ;
+  updateReviewBtn();
+  updateProgress();
+}
+
+function toggleOpt(q, oi) {
+  if (answered[q.id]) return;
+  const set = selected[q.id] || (selected[q.id] = new Set());
+  if (set.has(oi)) set.delete(oi); else set.add(oi);
+  document.getElementById('opt-' + q.id + '-' + oi).classList.toggle('selected', set.has(oi));
+  document.getElementById('check-' + q.id).disabled = set.size === 0;
+}
+
+function finishCard(q, isCorrect, html) {
+  answered[q.id] = true;
+  if (isCorrect) scores.correct++; else missed[q.id] = true;
+  updateReviewBtn();
+  document.getElementById('card-' + q.id).classList.add(isCorrect ? 'answered-correct' : 'answered-wrong');
+  const fb = document.getElementById('fb-' + q.id);
+  fb.className = 'feedback ' + (isCorrect ? 'correct-fb' : 'wrong-fb') + ' show';
+  fb.innerHTML = html;
+  updateStats();
+}
+
+function answerQ(q, chosen) {
+  if (answered[q.id]) return;
+  const isCorrect = chosen === q.correct;
+  q.options.forEach((_, oi) => {
+    const btn = document.getElementById('opt-' + q.id + '-' + oi);
+    btn.disabled = true;
+    if (oi === q.correct) btn.classList.add(oi === chosen ? 'correct-ans' : 'reveal-correct');
+    else if (oi === chosen) btn.classList.add('wrong-ans');
+  });
+  const ans = `<strong>${letters[q.correct]}. ${esc(q.options[q.correct])}</strong>`;
+  finishCard(q, isCorrect, isCorrect ? `<strong>✓ Correct!</strong> ${ans}` : `<strong>✗ Incorrect.</strong> The answer is ${ans}`);
+}
+
+function checkMulti(q) {
+  if (answered[q.id]) return;
+  const set = selected[q.id] || new Set();
+  const right = new Set(q.correct);
+  const isCorrect = set.size === right.size && [...set].every(i => right.has(i));
+  q.options.forEach((_, oi) => {
+    const btn = document.getElementById('opt-' + q.id + '-' + oi);
+    btn.disabled = true;
+    btn.classList.remove('selected');
+    if (right.has(oi)) btn.classList.add(set.has(oi) ? 'correct-ans' : 'reveal-correct');
+    else if (set.has(oi)) btn.classList.add('wrong-ans');
+  });
+  document.getElementById('check-' + q.id).style.display = 'none';
+  const ans = q.correct.map(i => `<strong>${letters[i]}. ${esc(q.options[i])}</strong>`).join(', ');
+  finishCard(q, isCorrect, isCorrect ? `<strong>✓ Correct!</strong> ${ans}` : `<strong>✗ Incorrect.</strong> The correct answers are ${ans}`);
+}
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function updateStats() {
+  document.getElementById('answeredCount').textContent = Object.keys(answered).length;
+  document.getElementById('scoreCount').textContent = scores.correct;
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = scores.total ? (Object.keys(answered).length / scores.total * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function updateReviewBtn() {
+  const btn = document.getElementById('reviewBtn');
+  if (!btn) return;
+  const n = Object.keys(missed).length;
+  btn.disabled = n === 0;
+  btn.textContent = n ? `Review incorrect answers (${n})` : 'Review incorrect answers';
+  document.getElementById('reviewNote').textContent = n ? '' : 'Questions you miss will show up here to retry.';
+}
+
+// Pull only the questions missed in this round, keeping their sets and order.
+function reviewIncorrect() {
+  if (!Object.keys(missed).length) return;
+  if (!reviewing) fullView = view;
+  view = view
+    .map((sec, si) => ({ label: sec.label, num: sec.num || si + 1, questions: sec.questions.filter(q => missed[q.id]) }))
+    .filter(sec => sec.questions.length);
+  reviewing = true;
+  resetAll();
+}
+
+function exitReview() {
+  view = fullView;
+  reviewing = false;
+  resetAll();
+}
+
+function shuffled(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Shuffle question order within each set and answer order within each question.
+// Each option keeps its original index, so the correct answer(s) are remapped exactly.
+function shuffleAll() {
+  reviewing = false;
+  view = sections.map(sec => ({
+    label: sec.label,
+    questions: shuffled(sec.questions).map(q => {
+      const order = shuffled(q.options.map((_, i) => i));
+      const options = order.map(i => q.options[i]);
+      const correct = q.multi
+        ? q.correct.map(c => order.indexOf(c)).sort((a, b) => a - b)
+        : order.indexOf(q.correct);
+      return Object.assign({}, q, { options, correct });
+    })
+  }));
+  fullView = view;
+  resetAll();
+}
+
+function resetAll() {
+  answered = {};
+  selected = {};
+  missed = {};
+  scores.correct = 0;
+  updateStats();
+  buildExam();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+buildExam();
+</script>
+</body>
+</html>
