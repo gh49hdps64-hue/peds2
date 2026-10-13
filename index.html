@@ -359,6 +359,25 @@
 
   .type-hint { font-family: var(--mono); font-size: 0.72rem; color: var(--accent3); margin-bottom: 8px; }
 
+
+  /* Only the score row stays pinned while scrolling */
+  header { position: relative; top: auto; z-index: auto; backdrop-filter: none; border-bottom: none; padding-bottom: 12px; }
+  .score-bar.sticky-bar {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 36px;
+    justify-content: flex-start;
+  }
+  .sticky-bar .bar-spacer { flex: 1; }
+  @media (max-width: 600px) {
+    .score-bar.sticky-bar { padding: 8px 16px; gap: 6px; }
+    .sticky-bar .bar-spacer { display: none; }
+    .sticky-bar .score-pill, .sticky-bar .reset-btn-header { font-size: 0.7rem; padding: 4px 11px; }
+  }
+
   @media (max-width: 600px) {
     header { padding: 14px 16px; }
     .container { padding: 32px 14px 80px; }
@@ -376,17 +395,20 @@
     <h1>Pediatric Dentistry — Exam 2 Practice Test</h1>
     <div class="subtitle">Primary Dentition &amp; Occlusion · Eruption &amp; Arch Development · Caries &amp; Prevention · Pulp Therapy &amp; Infant Oral Health</div>
   </div>
-  <div class="score-bar">
+  <div class="header-tools">
     <div class="mode-toggle" role="group" aria-label="Answer format">
       <button class="mode-btn" data-mode="mc" onclick="setMode('mc')">Multiple choice</button>
       <button class="mode-btn" data-mode="typed" onclick="setMode('typed')">Type answer</button>
     </div>
-    <div class="score-pill">Answered: <span id="answeredCount">0</span> / <span id="totalCount">0</span></div>
-    <div class="score-pill">Score: <span id="scoreCount">0</span> correct</div>
-    <button class="reset-btn-header" onclick="resetAll()">↺ Reset</button>
-    <button class="reset-btn-header" onclick="shuffleAll()">⇄ Reset &amp; Shuffle</button>
   </div>
 </header>
+<div class="score-bar sticky-bar">
+    <div class="score-pill">Answered: <span id="answeredCount">0</span> / <span id="totalCount">0</span></div>
+    <div class="score-pill">Score: <span id="scoreCount">0</span> correct</div>
+    <span class="bar-spacer"></span>
+    <button class="reset-btn-header" onclick="resetAll()">↺ Reset</button>
+    <button class="reset-btn-header" onclick="shuffleAll()">⇄ Reset &amp; Shuffle</button>
+</div>
 
 <div class="container" id="examContainer"></div>
 
