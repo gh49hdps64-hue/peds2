@@ -306,6 +306,59 @@
     font-family: var(--mono); font-size: 0.78rem; color: #fca5a5;
   }
 
+  .type-row { display: flex; gap: 8px; }
+  .type-input {
+    flex: 1; min-width: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    outline: none;
+  }
+  .type-input:focus { border-color: var(--accent); }
+  .type-input.in-correct { border-color: var(--correct); background: rgba(52,211,153,0.08); }
+  .type-input.in-wrong { border-color: var(--wrong); background: rgba(248,113,113,0.07); color: #fca5a5; text-decoration: line-through; }
+  .type-input.in-blank { border-color: var(--wrong); }
+  .type-row .check-btn { margin-top: 0; }
+  .link-btn {
+    background: none; border: none; padding: 0; margin-top: 10px;
+    color: var(--muted); font-family: var(--mono); font-size: 0.72rem; cursor: pointer;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .link-btn:hover { color: var(--text); }
+  .override-btn {
+    margin-left: 8px; background: transparent; border: 1px solid rgba(252,165,165,0.5);
+    color: #fca5a5; border-radius: 6px; padding: 2px 9px; font-family: var(--mono); font-size: 0.7rem; cursor: pointer;
+  }
+  .override-btn:hover { border-color: var(--correct); color: var(--correct); }
+
+
+  .mode-toggle {
+    display: inline-flex;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px;
+  }
+  .mode-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    border-radius: 16px;
+    padding: 4px 12px;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .mode-btn.active { background: var(--accent); color: #0c0e14; font-weight: 500; }
+  .mode-btn:not(.active):hover { color: var(--text); }
+
+  .type-hint { font-family: var(--mono); font-size: 0.72rem; color: var(--accent3); margin-bottom: 8px; }
+
   @media (max-width: 600px) {
     header { padding: 14px 16px; }
     .container { padding: 32px 14px 80px; }
@@ -324,6 +377,10 @@
     <div class="subtitle">Primary Dentition &amp; Occlusion · Eruption &amp; Arch Development · Caries &amp; Prevention · Pulp Therapy &amp; Infant Oral Health</div>
   </div>
   <div class="score-bar">
+    <div class="mode-toggle" role="group" aria-label="Answer format">
+      <button class="mode-btn" data-mode="mc" onclick="setMode('mc')">Multiple choice</button>
+      <button class="mode-btn" data-mode="typed" onclick="setMode('typed')">Type answer</button>
+    </div>
     <div class="score-pill">Answered: <span id="answeredCount">0</span> / <span id="totalCount">0</span></div>
     <div class="score-pill">Score: <span id="scoreCount">0</span> correct</div>
     <button class="reset-btn-header" onclick="resetAll()">↺ Reset</button>
@@ -354,7 +411,25 @@ const sections = [
      2,
      3
     ],
-    "multi": true
+    "multi": true,
+    "typed": {
+     "items": [
+      [
+       "incisor"
+      ],
+      [
+       "canine",
+       "cuspid"
+      ],
+      [
+       "premolar",
+       "bicuspid"
+      ]
+     ],
+     "hint": "List all 3, separated by commas.",
+     "fuzzy": true,
+     "show": "Canines, Incisors, Premolars"
+    }
    },
    {
     "id": "q02",
@@ -365,7 +440,28 @@ const sections = [
      "Superior and lingual",
      "Superior and labial"
     ],
-    "correct": 1
+    "correct": 1,
+    "typed": {
+     "aliases": [
+      "inferolingual",
+      "inferior lingual",
+      "lingual and inferior",
+      "lingual inferior"
+     ],
+     "items": [
+      [
+       "inferior",
+       "below",
+       "apical",
+       "under"
+      ],
+      [
+       "lingual"
+      ]
+     ],
+     "fuzzy": true,
+     "show": "Inferior and lingual"
+    }
    },
    {
     "id": "q03",
@@ -376,7 +472,21 @@ const sections = [
      "All primary teeth except the second molars",
      "All primary teeth"
     ],
-    "correct": 3
+    "correct": 3,
+    "typed": {
+     "aliases": [
+      "all primary teeth",
+      "all",
+      "all of them",
+      "all primary",
+      "all 20",
+      "all 20 primary teeth",
+      "all teeth",
+      "all the primary teeth"
+     ],
+     "fuzzy": false,
+     "show": "All primary teeth"
+    }
    },
    {
     "id": "q04",
@@ -387,7 +497,28 @@ const sections = [
      "Permanent canine",
      "Permanent first premolar"
     ],
-    "correct": 1
+    "correct": 1,
+    "typed": {
+     "keys": [
+      [
+       "first",
+       "1st",
+       "6 year",
+       "six year"
+      ],
+      [
+       "molar"
+      ]
+     ],
+     "not": [
+      "premolar",
+      "primary",
+      "second",
+      "2nd"
+     ],
+     "fuzzy": true,
+     "show": "Permanent first molar"
+    }
    },
    {
     "id": "q05",
@@ -398,7 +529,32 @@ const sections = [
      "Spaces only in the primate space regions",
      "Crowding of the primary incisors"
     ],
-    "correct": 0
+    "correct": 0,
+    "typed": {
+     "keys": [
+      [
+       "space",
+       "spaces",
+       "spacing",
+       "spaced",
+       "gap",
+       "gaps",
+       "diastem"
+      ]
+     ],
+     "not": [
+      "no",
+      "without",
+      "closed",
+      "none",
+      "lack",
+      "absen",
+      "not",
+      "non"
+     ],
+     "fuzzy": true,
+     "show": "Spaces between the primary teeth"
+    }
    },
    {
     "id": "q06",
@@ -409,7 +565,30 @@ const sections = [
      "Spaces only in the primate space regions",
      "Generalized diastemas in the posterior segments"
     ],
-    "correct": 1
+    "correct": 1,
+    "typed": {
+     "keys": [
+      [
+       "no space",
+       "no spacing",
+       "without space",
+       "no gap",
+       "closed",
+       "none",
+       "not spaced",
+       "no diastem",
+       "nonspaced",
+       "non spaced",
+       "absence of spac",
+       "lack of spac",
+       "no spaces",
+       "without gap",
+       "crowd"
+      ]
+     ],
+     "fuzzy": true,
+     "show": "No spaces between the primary teeth"
+    }
    },
    {
     "id": "q07",
@@ -420,7 +599,20 @@ const sections = [
      "Canine and first primary molar",
      "First and second primary molars"
     ],
-    "correct": 1
+    "correct": 1,
+    "typed": {
+     "items": [
+      [
+       "lateral"
+      ],
+      [
+       "canine",
+       "cuspid"
+      ]
+     ],
+     "fuzzy": true,
+     "show": "Lateral incisor and canine"
+    }
    },
    {
     "id": "q08",
@@ -431,7 +623,28 @@ const sections = [
      "Central and lateral incisors",
      "First and second primary molars"
     ],
-    "correct": 0
+    "correct": 0,
+    "typed": {
+     "items": [
+      [
+       "canine",
+       "cuspid"
+      ],
+      [
+       "first",
+       "1st",
+       "molar"
+      ]
+     ],
+     "not": [
+      "second",
+      "2nd",
+      "lateral",
+      "incisor"
+     ],
+     "fuzzy": true,
+     "show": "Canine and first primary molar"
+    }
    },
    {
     "id": "q09",
@@ -442,7 +655,18 @@ const sections = [
      "Second primary molars",
      "Canines"
     ],
-    "correct": 3
+    "correct": 3,
+    "typed": {
+     "aliases": [
+      "Canines",
+      "canine",
+      "cuspids",
+      "cuspid",
+      "maxillary and mandibular canines"
+     ],
+     "fuzzy": true,
+     "show": "Canines"
+    }
    },
    {
     "id": "q10",
@@ -453,7 +677,16 @@ const sections = [
      "Concave",
      "Flat (orthognathic)"
     ],
-    "correct": 1
+    "correct": 1,
+    "typed": {
+     "aliases": [
+      "Convex",
+      "convex profile",
+      "convex facial profile"
+     ],
+     "fuzzy": true,
+     "show": "Convex"
+    }
    },
    {
     "id": "q11",
@@ -464,7 +697,26 @@ const sections = [
      "The percentage of the maxillary incisor clinical crown covered by the mandibular incisors",
      "The vertical gap between incisal edges when the molars are in occlusion"
     ],
-    "correct": 1
+    "correct": 1,
+    "typed": {
+     "ttext": "Overbite quantifies the percentage of the ______ incisor clinical crown covered by the ______ incisors.",
+     "hint": "Type both blanks in order, separated by a comma.",
+     "show": "Mandibular, maxillary",
+     "items": [
+      [
+       "mandibular",
+       "mand",
+       "lower"
+      ],
+      [
+       "maxillary",
+       "max",
+       "upper"
+      ]
+     ],
+     "ordered": true,
+     "fuzzy": true
+    }
    },
    {
     "id": "q12",
@@ -475,7 +727,23 @@ const sections = [
      "Flush to distal step terminal plane",
      "Exaggerated (large) mesial step only"
     ],
-    "correct": 0
+    "correct": 0,
+    "typed": {
+     "keys": [
+      [
+       "mesial"
+      ],
+      [
+       "flush",
+       "straight"
+      ]
+     ],
+     "not": [
+      "distal"
+     ],
+     "fuzzy": true,
+     "show": "Mesial step to flush (straight) terminal plane"
+    }
    },
    {
     "id": "q13",
@@ -486,7 +754,21 @@ const sections = [
      "10–15%",
      "20–25%"
     ],
-    "correct": 1
+    "correct": 1,
+    "typed": {
+     "aliases": [
+      "1-3%",
+      "1 to 3",
+      "1-3",
+      "1 3",
+      "1 to 3 percent",
+      "1-3 percent",
+      "one to three percent",
+      "1 to 3%"
+     ],
+     "fuzzy": false,
+     "show": "1–3%"
+    }
    },
    {
     "id": "q14",
@@ -497,7 +779,18 @@ const sections = [
      "Permanent molars",
      "Permanent premolars"
     ],
-    "correct": 2
+    "correct": 2,
+    "typed": {
+     "aliases": [
+      "Permanent molars",
+      "molars",
+      "molar",
+      "permanent molar",
+      "the molars"
+     ],
+     "fuzzy": true,
+     "show": "Permanent molars"
+    }
    }
   ]
  },
@@ -513,7 +806,33 @@ const sections = [
      "Central incisor, lateral incisor, first primary molar, canine, second primary molar",
      "Central incisor, first primary molar, lateral incisor, canine, second primary molar"
     ],
-    "correct": 2
+    "correct": 2,
+    "typed": {
+     "items": [
+      [
+       "central"
+      ],
+      [
+       "lateral"
+      ],
+      [
+       "first",
+       "1st"
+      ],
+      [
+       "canine",
+       "cuspid"
+      ],
+      [
+       "second",
+       "2nd"
+      ]
+     ],
+     "ordered": true,
+     "hint": "List them in order, separated by commas.",
+     "fuzzy": true,
+     "show": "Central incisor, lateral incisor, first primary molar, canine, second primary molar"
+    }
    },
    {
     "id": "q16",
@@ -524,7 +843,27 @@ const sections = [
      "First premolar, second premolar, canine",
      "Second premolar, first premolar, canine"
     ],
-    "correct": 2
+    "correct": 2,
+    "typed": {
+     "items": [
+      [
+       "first",
+       "1st"
+      ],
+      [
+       "second",
+       "2nd"
+      ],
+      [
+       "canine",
+       "cuspid"
+      ]
+     ],
+     "ordered": true,
+     "hint": "List them in order, separated by commas.",
+     "fuzzy": true,
+     "show": "First premolar, second premolar, canine"
+    }
    },
    {
     "id": "q17",
@@ -535,7 +874,27 @@ const sections = [
      "First premolar, canine, second premolar",
      "Canine, second premolar, first premolar"
     ],
-    "correct": 0
+    "correct": 0,
+    "typed": {
+     "items": [
+      [
+       "canine",
+       "cuspid"
+      ],
+      [
+       "first",
+       "1st"
+      ],
+      [
+       "second",
+       "2nd"
+      ]
+     ],
+     "ordered": true,
+     "hint": "List them in order, separated by commas.",
+     "fuzzy": true,
+     "show": "Canine, first premolar, second premolar"
+    }
    },
    {
     "id": "q18",
@@ -546,7 +905,18 @@ const sections = [
      "Between the first and second",
      "Before"
     ],
-    "correct": 3
+    "correct": 3,
+    "typed": {
+     "aliases": [
+      "Before",
+      "prior",
+      "prior to",
+      "before them",
+      "earlier"
+     ],
+     "fuzzy": true,
+     "show": "Before"
+    }
    },
    {
     "id": "q19",
@@ -557,7 +927,21 @@ const sections = [
      "10.5 years",
      "12 years"
     ],
-    "correct": 0
+    "correct": 0,
+    "typed": {
+     "aliases": [
+      "8.5 years",
+      "8.5",
+      "8 and a half",
+      "eight and a half",
+      "8 1/2",
+      "8.5 years old",
+      "8 and a half years",
+      "eight and a half years"
+     ],
+     "fuzzy": false,
+     "show": "8.5 years"
+    }
    },
    {
     "id": "q20",
@@ -568,7 +952,27 @@ const sections = [
      "16 primary teeth and 8 permanent teeth",
      "20 primary teeth and 4 permanent teeth"
     ],
-    "correct": 0
+    "correct": 0,
+    "typed": {
+     "ttext": "A child at 8.5 years is expected to have how many erupted primary teeth and how many permanent teeth?",
+     "hint": "Type both numbers (primary, then permanent).",
+     "show": "12 primary teeth and 12 permanent teeth",
+     "aliases": [
+      "12 primary and 12 permanent",
+      "12 and 12",
+      "12 primary 12 permanent",
+      "12 each",
+      "12 of each",
+      "twelve and twelve",
+      "12 primary teeth and 12 permanent teeth",
+      "12 12",
+      "12/12",
+      "12 primary teeth 12 permanent teeth",
+      "twelve primary and twelve permanent",
+      "12 of each type"
+     ],
+     "fuzzy": false
+    }
    },
    {
     "id": "q21",
@@ -579,7 +983,22 @@ const sections = [
      "11–14 years",
      "15–18 years"
     ],
-    "correct": 0
+    "correct": 0,
+    "typed": {
+     "aliases": [
+      "7–10 years",
+      "7 to 10",
+      "7-10",
+      "7 10",
+      "7 to 10 years",
+      "7-10 years old",
+      "seven to ten",
+      "ages 7 to 10",
+      "7 to 10 years old"
+     ],
+     "fuzzy": false,
+     "show": "7–10 years"
+    }
    },
    {
     "id": "q22",
@@ -590,7 +1009,24 @@ const sections = [
      "The size differential between the posterior primary teeth and their permanent successors",
      "The size differential between the primary and permanent incisors"
     ],
-    "correct": 2
+    "correct": 2,
+    "typed": {
+     "ttext": "Leeway space is the size differential between which two groups of teeth?",
+     "show": "The posterior primary teeth (canines, 1st and 2nd molars) and their permanent successors (canines, premolars)",
+     "keys": [
+      [
+       "primary",
+       "deciduous",
+       "baby"
+      ],
+      [
+       "successor",
+       "permanent",
+       "premolar"
+      ]
+     ],
+     "fuzzy": true
+    }
    },
    {
     "id": "q23",
@@ -608,7 +1044,36 @@ const sections = [
      2,
      5
     ],
-    "multi": true
+    "multi": true,
+    "typed": {
+     "aliases": [
+      "canines and first and second molars",
+      "canines and molars",
+      "canines first and second molars"
+     ],
+     "items": [
+      [
+       "canine",
+       "cuspid"
+      ],
+      [
+       "first",
+       "1st"
+      ],
+      [
+       "second",
+       "2nd"
+      ]
+     ],
+     "hint": "List all 3, separated by commas.",
+     "not": [
+      "incisor",
+      "premolar",
+      "permanent"
+     ],
+     "fuzzy": true,
+     "show": "Primary first molars, Primary canines, Primary second molars"
+    }
    },
    {
     "id": "q24",
@@ -626,7 +1091,38 @@ const sections = [
      1,
      2
     ],
-    "multi": true
+    "multi": true,
+    "typed": {
+     "aliases": [
+      "canines and premolars",
+      "permanent canines and premolars",
+      "canines premolars",
+      "canines and first and second premolars",
+      "canines first and second premolars"
+     ],
+     "items": [
+      [
+       "canine",
+       "cuspid"
+      ],
+      [
+       "first",
+       "1st"
+      ],
+      [
+       "second",
+       "2nd"
+      ]
+     ],
+     "hint": "List all 3, separated by commas.",
+     "not": [
+      "molar",
+      "incisor",
+      "primary"
+     ],
+     "fuzzy": true,
+     "show": "Second premolars, First premolars, Canines"
+    }
    },
    {
     "id": "q25",
@@ -637,7 +1133,20 @@ const sections = [
      "Class II",
      "End-to-end that self-corrects to Class I"
     ],
-    "correct": 2
+    "correct": 2,
+    "typed": {
+     "aliases": [
+      "Class II",
+      "class 2",
+      "class two",
+      "cl ii",
+      "cl 2",
+      "class ii molar",
+      "class 2 molar"
+     ],
+     "fuzzy": false,
+     "show": "Class II"
+    }
    },
    {
     "id": "q26",
@@ -648,7 +1157,19 @@ const sections = [
      "Class II",
      "Class III"
     ],
-    "correct": 1
+    "correct": 1,
+    "typed": {
+     "aliases": [
+      "End-to-end",
+      "end to end",
+      "end on",
+      "end-on",
+      "cusp to cusp",
+      "end to end relationship"
+     ],
+     "fuzzy": true,
+     "show": "End-to-end"
+    }
    },
    {
     "id": "q27",
@@ -659,7 +1180,19 @@ const sections = [
      "100%",
      "30%"
     ],
-    "correct": 2
+    "correct": 2,
+    "typed": {
+     "aliases": [
+      "100%",
+      "100",
+      "100 percent",
+      "always",
+      "all the time",
+      "one hundred percent"
+     ],
+     "fuzzy": false,
+     "show": "100%"
+    }
    },
    {
     "id": "q28",
@@ -670,7 +1203,16 @@ const sections = [
      "The canine relationship",
      "The terminal plane of the primary second molars"
     ],
-    "correct": 3
+    "correct": 3,
+    "typed": {
+     "keys": [
+      [
+       "terminal plane"
+      ]
+     ],
+     "fuzzy": true,
+     "show": "The terminal plane of the primary second molars"
+    }
    },
    {
     "id": "q29",
@@ -681,7 +1223,19 @@ const sections = [
      "A Class II molar relationship",
      "Crossbite of the permanent first molars"
     ],
-    "correct": 1
+    "correct": 1,
+    "typed": {
+     "keys": [
+      [
+       "incisor"
+      ],
+      [
+       "crowd"
+      ]
+     ],
+     "fuzzy": true,
+     "show": "Incisor crowding in the mixed dentition"
+    }
    }
   ]
  },
@@ -697,7 +1251,26 @@ const sections = [
      "Actinomyces viscosus",
      "Candida albicans"
     ],
-    "correct": 0
+    "correct": 0,
+    "typed": {
+     "aliases": [
+      "Streptococcus mutans",
+      "s mutans",
+      "strep mutans",
+      "mutans",
+      "s. mutans",
+      "mutans streptococci",
+      "streptococcus",
+      "strep"
+     ],
+     "keys": [
+      [
+       "mutans"
+      ]
+     ],
+     "fuzzy": true,
+     "show": "Streptococcus mutans"
+    }
    },
    {
     "id": "q31",
@@ -708,7 +1281,20 @@ const sections = [
      "Daycare peers",
      "Father"
     ],
-    "correct": 1
+    "correct": 1,
+    "typed": {
+     "keys": [
+      [
+       "mother",
+       "mom",
+       "caregiver",
+       "maternal",
+       "mum"
+      ]
+     ],
+     "fuzzy": true,
+     "show": "Mother/primary caregiver"
+    }
    },
    {
     "id": "q32",
@@ -719,7 +1305,28 @@ const sections = [
      "Primary second molars",
      "Maxillary incisors"
     ],
-    "correct": 3
+    "correct": 3,
+    "typed": {
+     "keys": [
+      [
+       "maxillary",
+       "max",
+       "upper"
+      ],
+      [
+       "incisor",
+       "anterior",
+       "front"
+      ]
+     ],
+     "not": [
+      "mandibular",
+      "lower",
+      "molar"
+     ],
+     "fuzzy": true,
+     "show": "Maxillary incisors"
+    }
    },
    {
     "id": "q33",
@@ -730,7 +1337,27 @@ const sections = [
      "Increase caries prevalence and risk",
      "Increase prevalence but not risk"
     ],
-    "correct": 2
+    "correct": 2,
+    "typed": {
+     "keys": [
+      [
+       "increase",
+       "higher",
+       "raise",
+       "more",
+       "greater",
+       "elevat"
+      ]
+     ],
+     "not": [
+      "decrease",
+      "no",
+      "lower",
+      "reduce"
+     ],
+     "fuzzy": true,
+     "show": "Increase caries prevalence and risk"
+    }
    },
    {
     "id": "q34",
@@ -741,7 +1368,16 @@ const sections = [
      "7.0",
      "5.5"
     ],
-    "correct": 3
+    "correct": 3,
+    "typed": {
+     "aliases": [
+      "5.5",
+      "ph 5.5",
+      "5.5 ph"
+     ],
+     "fuzzy": false,
+     "show": "5.5"
+    }
    },
    {
     "id": "q35",
@@ -752,7 +1388,23 @@ const sections = [
      "24 months",
      "36 months"
     ],
-    "correct": 0
+    "correct": 0,
+    "typed": {
+     "aliases": [
+      "12 months",
+      "1 year",
+      "one year",
+      "twelve months",
+      "12 mo",
+      "12",
+      "12 months old",
+      "1 year old",
+      "12 month",
+      "age 1"
+     ],
+     "fuzzy": false,
+     "show": "12 months"
+    }
    },
    {
     "id": "q36",
@@ -771,7 +1423,38 @@ const sections = [
      2,
      3
     ],
-    "multi": true
+    "multi": true,
+    "typed": {
+     "items": [
+      [
+       "caregiver",
+       "mother",
+       "mom",
+       "parent",
+       "maternal"
+      ],
+      [
+       "sugar",
+       "snack",
+       "beverage",
+       "sweet",
+       "juice",
+       "soda",
+       "drink"
+      ],
+      [
+       "plaque"
+      ],
+      [
+       "enamel",
+       "hypoplas",
+       "defect"
+      ]
+     ],
+     "hint": "List all 4, separated by commas.",
+     "fuzzy": true,
+     "show": "Caregiver with active caries, Visible plaque, Frequent sugary snacks/beverages (>3x/day), Enamel defects"
+    }
    },
    {
     "id": "q37",
@@ -782,7 +1465,23 @@ const sections = [
      "More than 7 times per week",
      "More than 3 times per day"
     ],
-    "correct": 3
+    "correct": 3,
+    "typed": {
+     "keys": [
+      [
+       "3",
+       "three",
+       "3x",
+       "3 x",
+       "3 times"
+      ]
+     ],
+     "not": [
+      "week"
+     ],
+     "fuzzy": true,
+     "show": "More than 3 times per day"
+    }
    },
    {
     "id": "q38",
@@ -793,7 +1492,19 @@ const sections = [
      "5000 ppm",
      "22,600 ppm"
     ],
-    "correct": 0
+    "correct": 0,
+    "typed": {
+     "aliases": [
+      "1000 ppm",
+      "1000",
+      "1,000 ppm",
+      "1000ppm",
+      "one thousand",
+      "1,000"
+     ],
+     "fuzzy": false,
+     "show": "1000 ppm"
+    }
    },
    {
     "id": "q39",
@@ -804,7 +1515,18 @@ const sections = [
      "Dietary supplementation",
      "Topical"
     ],
-    "correct": 3
+    "correct": 3,
+    "typed": {
+     "aliases": [
+      "Topical",
+      "topically",
+      "topical fluoride",
+      "topical effect",
+      "topical mechanism"
+     ],
+     "fuzzy": true,
+     "show": "Topical"
+    }
    },
    {
     "id": "q40",
@@ -822,7 +1544,40 @@ const sections = [
      1,
      2
     ],
-    "multi": true
+    "multi": true,
+    "typed": {
+     "items": [
+      [
+       "water",
+       "0.6",
+       ".6",
+       "ppm",
+       "fluoridat"
+      ],
+      [
+       "high",
+       "risk"
+      ],
+      [
+       "other source",
+       "deficien",
+       "lack",
+       "no other",
+       "other fluoride",
+       "inadequate",
+       "insufficient",
+       "not getting",
+       "other ingestion",
+       "other sources"
+      ]
+     ],
+     "hint": "List all 3, separated by commas.",
+     "not": [
+      "low"
+     ],
+     "fuzzy": true,
+     "show": "The patient has high caries risk, Water contains <0.6 ppm F, Other fluoride ingestion sources are deficient"
+    }
    },
    {
     "id": "q41",
@@ -833,7 +1588,24 @@ const sections = [
      "<1.0 ppm F",
      "<1.2 ppm F"
     ],
-    "correct": 1
+    "correct": 1,
+    "typed": {
+     "aliases": [
+      "<0.6 ppm F",
+      "0.6",
+      ".6",
+      "less than 0.6",
+      "below 0.6",
+      "0.6 ppm",
+      "less than 0.6 ppm",
+      "< 0.6",
+      "under 0.6",
+      "0.6 ppm f",
+      "less than .6"
+     ],
+     "fuzzy": false,
+     "show": "<0.6 ppm F"
+    }
    },
    {
     "id": "q42",
@@ -844,7 +1616,22 @@ const sections = [
      "5.0 mg/kg",
      "32 mg/kg"
     ],
-    "correct": 2
+    "correct": 2,
+    "typed": {
+     "aliases": [
+      "5.0 mg/kg",
+      "5",
+      "5.0",
+      "5 mg/kg",
+      "5mg/kg",
+      "five",
+      "5 mg per kg",
+      "5.0 mg per kg",
+      "5 mg"
+     ],
+     "fuzzy": false,
+     "show": "5.0 mg/kg"
+    }
    },
    {
     "id": "q43",
@@ -855,7 +1642,17 @@ const sections = [
      "No toothpaste",
      "Rice-grain size smear"
     ],
-    "correct": 3
+    "correct": 3,
+    "typed": {
+     "keys": [
+      [
+       "rice",
+       "smear"
+      ]
+     ],
+     "fuzzy": true,
+     "show": "Rice-grain size smear"
+    }
    },
    {
     "id": "q44",
@@ -866,7 +1663,16 @@ const sections = [
      "Pea-sized amount",
      "Full-length strip"
     ],
-    "correct": 2
+    "correct": 2,
+    "typed": {
+     "keys": [
+      [
+       "pea"
+      ]
+     ],
+     "fuzzy": true,
+     "show": "Pea-sized amount"
+    }
    }
   ]
  },
@@ -882,7 +1688,24 @@ const sections = [
      "Dentin thickness remaining over the pulp",
      "Size of the carious lesion's outline form"
     ],
-    "correct": 2
+    "correct": 2,
+    "typed": {
+     "keys": [
+      [
+       "dentin",
+       "dentine"
+      ],
+      [
+       "thick",
+       "remaining",
+       "amount",
+       "left",
+       "thin"
+      ]
+     ],
+     "fuzzy": true,
+     "show": "Dentin thickness remaining over the pulp"
+    }
    },
    {
     "id": "q46",
@@ -898,7 +1721,23 @@ const sections = [
      2,
      3
     ],
-    "multi": true
+    "multi": true,
+    "typed": {
+     "items": [
+      [
+       "clinical",
+       "exam",
+       "assessment"
+      ],
+      [
+       "history",
+       "pain"
+      ]
+     ],
+     "hint": "List all 2, separated by commas.",
+     "fuzzy": true,
+     "show": "Clinical assessment/examination, History of pain"
+    }
    },
    {
     "id": "q47",
@@ -909,7 +1748,16 @@ const sections = [
      "Irreversible pulpitis",
      "Dentin hypersensitivity"
     ],
-    "correct": 2
+    "correct": 2,
+    "typed": {
+     "keys": [
+      [
+       "irreversible"
+      ]
+     ],
+     "fuzzy": true,
+     "show": "Irreversible pulpitis"
+    }
    },
    {
     "id": "q48",
@@ -928,7 +1776,36 @@ const sections = [
      2,
      3
     ],
-    "multi": true
+    "multi": true,
+    "typed": {
+     "items": [
+      [
+       "base",
+       "liner"
+      ],
+      [
+       "indirect",
+       "ipt"
+      ],
+      [
+       "direct pulp cap",
+       "dpc",
+       "pulp cap",
+       "direct cap"
+      ],
+      [
+       "pulpotomy",
+       "pulpotomies"
+      ]
+     ],
+     "hint": "List all 4, separated by commas.",
+     "not": [
+      "pulpectomy",
+      "extraction"
+     ],
+     "fuzzy": true,
+     "show": "Pulpotomy, Indirect pulp treatment, Direct pulp cap, Protective base/liner"
+    }
    },
    {
     "id": "q49",
@@ -939,7 +1816,17 @@ const sections = [
      "Direct pulp cap",
      "Indirect pulp treatment"
     ],
-    "correct": 1
+    "correct": 1,
+    "typed": {
+     "aliases": [
+      "Pulpectomy",
+      "pulpectomies",
+      "a pulpectomy",
+      "pulpectomys"
+     ],
+     "fuzzy": false,
+     "show": "Pulpectomy"
+    }
    },
    {
     "id": "q50",
@@ -950,7 +1837,19 @@ const sections = [
      "Hemorrhage that is controlled after amputation",
      "Purulent material in the pulp chamber"
     ],
-    "correct": 3
+    "correct": 3,
+    "typed": {
+     "keys": [
+      [
+       "pus",
+       "purulen",
+       "suppur",
+       "exudate"
+      ]
+     ],
+     "fuzzy": true,
+     "show": "Purulent material in the pulp chamber"
+    }
    },
    {
     "id": "q51",
@@ -966,7 +1865,22 @@ const sections = [
      1,
      3
     ],
-    "multi": true
+    "multi": true,
+    "typed": {
+     "items": [
+      [
+       "swell"
+      ],
+      [
+       "absces",
+       "abcess",
+       "abses"
+      ]
+     ],
+     "hint": "List all 2, separated by commas.",
+     "fuzzy": true,
+     "show": "Swelling, Abscess"
+    }
    },
    {
     "id": "q52",
@@ -977,7 +1891,23 @@ const sections = [
      "Necrotic pulps",
      "Teeth with a periapical abscess"
     ],
-    "correct": 0
+    "correct": 0,
+    "typed": {
+     "keys": [
+      [
+       "deep"
+      ],
+      [
+       "caries",
+       "carious",
+       "lesion",
+       "decay",
+       "cavit"
+      ]
+     ],
+     "fuzzy": true,
+     "show": "Deep carious lesions approximating the pulp"
+    }
    },
    {
     "id": "q53",
@@ -988,7 +1918,31 @@ const sections = [
      "24 months",
      "36 months"
     ],
-    "correct": 0
+    "correct": 0,
+    "typed": {
+     "aliases": [
+      "12 months",
+      "1 year",
+      "one year",
+      "twelve months",
+      "12 mo",
+      "12",
+      "12 months old",
+      "1 year old",
+      "12 month",
+      "age 1",
+      "first birthday",
+      "by first birthday",
+      "by 1 year",
+      "by one year",
+      "by 12 months",
+      "no later than 12 months",
+      "no later than 1 year",
+      "by age 1"
+     ],
+     "fuzzy": false,
+     "show": "12 months"
+    }
    },
    {
     "id": "q54",
@@ -1006,7 +1960,33 @@ const sections = [
      2,
      5
     ],
-    "multi": true
+    "multi": true,
+    "typed": {
+     "items": [
+      [
+       "diet",
+       "nutrition",
+       "feeding",
+       "food"
+      ],
+      [
+       "develop",
+       "eruption",
+       "growth"
+      ],
+      [
+       "habit",
+       "pacifier",
+       "thumb",
+       "non nutritive",
+       "nonnutritive",
+       "sucking"
+      ]
+     ],
+     "hint": "List all 3, separated by commas.",
+     "fuzzy": true,
+     "show": "Dental development, Non-nutritive habits, Diet/nutrition"
+    }
    },
    {
     "id": "q55",
@@ -1017,21 +1997,122 @@ const sections = [
      "Formula",
      "Water"
     ],
-    "correct": 3
+    "correct": 3,
+    "typed": {
+     "aliases": [
+      "Water",
+      "plain water",
+      "only water",
+      "h2o"
+     ],
+     "fuzzy": true,
+     "show": "Water"
+    }
    }
   ]
  }
 ];
 
+let mode = 'mc';
+try { if (localStorage.getItem('quizMode') === 'typed') mode = 'typed'; } catch (e) {}
 let view = sections;
-let fullView = sections;   // the full test (original or shuffled) to return to after reviewing
+let fullView = sections;
 let reviewing = false;
-let missed = {};           // question id -> true for questions answered incorrectly this round
+let missed = {};
 let answered = {};
 let selected = {};
 let scores = { correct: 0, total: 0 };
 const letters = ['A','B','C','D','E','F','G','H'];
 
+// ---------- typed-answer matching ----------
+function norm(s) {
+  return (' ' + s.toLowerCase() + ' ')
+    .replace(/[µμ]/g, 'u')
+    .replace(/[‐‑‒–—_\/-]/g, ' ')
+    .replace(/(\d),(\d{3})/g, '$1$2')
+    .replace(/(^|[^0-9])\.|\.(?=[^0-9]|$)/g, '$1 ')
+    .replace(/[^a-z0-9. ]/g, ' ')
+    .replace(/\b(the|a|an)\b/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+}
+function squash(s) { return norm(s).replace(/\band\b/g, ' ').replace(/ /g, ''); }
+function lev(a, b) {
+  const m = a.length, n = b.length;
+  const d = Array.from({length: m + 1}, (_, i) => [i]);
+  for (let j = 1; j <= n; j++) d[0][j] = j;
+  for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++)
+    d[i][j] = Math.min(d[i-1][j] + 1, d[i][j-1] + 1, d[i-1][j-1] + (a[i-1] === b[j-1] ? 0 : 1));
+  return d[m][n];
+}
+function hasTerm(text, term) {
+  const n = norm(text), k = norm(term);
+  if (!k) return false;
+  if ((' ' + n + ' ').includes(k.length <= 3 ? ' ' + k + ' ' : k)) return true;
+  if (k.length > 3 && n.replace(/ /g, '').includes(k.replace(/ /g, ''))) return true;
+  if (k.length >= 6 && !k.includes(' ')) return n.split(' ').some(w => lev(w, k) <= 1);
+  return false;
+}
+function termPos(text, term) {
+  const n = norm(text), k = norm(term);
+  const i = (' ' + n + ' ').indexOf(k.length <= 3 ? ' ' + k + ' ' : k);
+  if (i >= 0) return i;
+  if (k.length >= 6 && !k.includes(' ')) {
+    let pos = 0;
+    for (const w of n.split(' ')) { if (lev(w, k) <= 1) return pos + 1; pos += w.length + 1; }
+  }
+  return -1;
+}
+function hasNot(text, words) {
+  const ws = norm(text).split(' ');
+  return words.some(n => ws.some(w => w === n || (n.length >= 4 && w.startsWith(n))));
+}
+const FILLER = new Set(['', 'both', 'all', 'teeth', 'etc', 'also', 'or', 'with', 'of', 'primary', 'permanent', 'the']);
+function isCorrect(q, typed) {
+  const t = q.typed;
+  const s = squash(typed);
+  if (!s) return false;
+  if (t.not && hasNot(typed, t.not)) return false;
+  if (t.aliases) for (const a of t.aliases) {
+    const sa = squash(a);
+    if (s === sa || s.replace(/s$/, '') === sa.replace(/s$/, '')) return true;
+    if (t.fuzzy) {
+      const tol = sa.length >= 10 ? 2 : sa.length >= 5 ? 1 : 0;
+      if (tol && lev(s, sa) <= tol) return true;
+    }
+  }
+  if (t.keys && t.keys.every(group => group.some(k => hasTerm(typed, k)))) return true;
+  if (t.items) {
+    const pieces = typed.split(/,|;|\n|\band\b|&|\+|→|->|\bthen\b/i).map(p => p.trim()).filter(p => !FILLER.has(norm(p)));
+    // every piece must name one of the required items
+    if (!pieces.every(p => t.items.some(item => item.some(k => hasTerm(p, k))))) return false;
+    // every required item must be named
+    if (!t.items.every(item => item.some(k => hasTerm(typed, k)))) return false;
+    if (t.ordered) {
+      const pos = t.items.map(item => Math.min(...item.map(k => termPos(typed, k)).filter(i => i >= 0)));
+      for (let i = 1; i < pos.length; i++) if (!(pos[i] > pos[i-1])) return false;
+    }
+    return true;
+  }
+  return false;
+}
+
+// ---------- mode switch ----------
+function setMode(m) {
+  if (m === mode) return;
+  mode = m;
+  try { localStorage.setItem('quizMode', m); } catch (e) {}
+  syncModeButtons();
+  resetAll();
+}
+function syncModeButtons() {
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    const on = b.dataset.mode === mode;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', on);
+  });
+}
+
+// ---------- rendering ----------
 function buildExam() {
   const container = document.getElementById('examContainer');
   container.innerHTML = '';
@@ -1056,45 +2137,50 @@ function buildExam() {
       const card = document.createElement('div');
       card.className = 'q-card';
       card.id = 'card-' + q.id;
+      const tag = mode === 'mc' && q.multi ? '<span class="q-tag">Select all that apply</span>' : '';
+      card.innerHTML = `<div class="q-meta"><span class="q-num">Q${totalQ}</span>${tag}</div><div class="q-text"></div>`;
+      card.querySelector('.q-text').textContent = mode === 'typed' && q.typed.ttext ? q.typed.ttext : q.text;
 
-      const meta = document.createElement('div');
-      meta.className = 'q-meta';
-      meta.innerHTML = `<span class="q-num">Q${totalQ}</span>` + (q.multi ? '<span class="q-tag">Select all that apply</span>' : '');
-      card.appendChild(meta);
-
-      const qText = document.createElement('div');
-      qText.className = 'q-text';
-      qText.textContent = q.text;
-      card.appendChild(qText);
-
-      const optWrap = document.createElement('div');
-      optWrap.className = 'options';
-      q.options.forEach((opt, oi) => {
-        const btn = document.createElement('button');
-        btn.className = 'opt' + (q.multi ? ' multi' : '');
-        btn.id = 'opt-' + q.id + '-' + oi;
-        btn.innerHTML = `<span class="opt-letter">${letters[oi]}</span><span></span>`;
-        btn.lastChild.textContent = opt;
-        btn.addEventListener('click', () => q.multi ? toggleOpt(q, oi) : answerQ(q, oi));
-        optWrap.appendChild(btn);
-      });
-      card.appendChild(optWrap);
-
-      if (q.multi) {
-        const check = document.createElement('button');
-        check.className = 'check-btn';
-        check.id = 'check-' + q.id;
-        check.textContent = 'Check answer';
-        check.disabled = true;
-        check.addEventListener('click', () => checkMulti(q));
-        card.appendChild(check);
+      if (mode === 'mc') {
+        const optWrap = document.createElement('div');
+        optWrap.className = 'options';
+        q.options.forEach((opt, oi) => {
+          const btn = document.createElement('button');
+          btn.className = 'opt' + (q.multi ? ' multi' : '');
+          btn.id = 'opt-' + q.id + '-' + oi;
+          btn.innerHTML = `<span class="opt-letter">${letters[oi]}</span><span></span>`;
+          btn.lastChild.textContent = opt;
+          btn.addEventListener('click', () => q.multi ? toggleOpt(q, oi) : answerQ(q, oi));
+          optWrap.appendChild(btn);
+        });
+        card.appendChild(optWrap);
+        if (q.multi) {
+          const check = document.createElement('button');
+          check.className = 'check-btn';
+          check.id = 'check-' + q.id;
+          check.textContent = 'Check answer';
+          check.disabled = true;
+          check.addEventListener('click', () => checkMulti(q));
+          card.appendChild(check);
+        }
+      } else {
+        const wrap = document.createElement('div');
+        wrap.innerHTML = (q.typed.hint ? `<div class="type-hint"></div>` : '') + `
+          <form class="type-row" autocomplete="off">
+            <input class="type-input" id="in-${q.id}" type="text" placeholder="Type your answer" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
+            <button class="check-btn" type="submit" id="check-${q.id}">Check</button>
+          </form>
+          <button class="link-btn" id="show-${q.id}" type="button">Show answer</button>`;
+        if (q.typed.hint) wrap.querySelector('.type-hint').textContent = q.typed.hint;
+        wrap.querySelector('form').addEventListener('submit', ev => { ev.preventDefault(); submitTyped(q); });
+        wrap.querySelector('.link-btn').addEventListener('click', () => revealQ(q));
+        card.appendChild(wrap);
       }
 
       const feedback = document.createElement('div');
       feedback.className = 'feedback';
       feedback.id = 'fb-' + q.id;
       card.appendChild(feedback);
-
       container.appendChild(card);
     });
   });
@@ -1110,28 +2196,20 @@ function buildExam() {
   updateProgress();
 }
 
-function toggleOpt(q, oi) {
-  if (answered[q.id]) return;
-  const set = selected[q.id] || (selected[q.id] = new Set());
-  if (set.has(oi)) set.delete(oi); else set.add(oi);
-  document.getElementById('opt-' + q.id + '-' + oi).classList.toggle('selected', set.has(oi));
-  document.getElementById('check-' + q.id).disabled = set.size === 0;
-}
-
-function finishCard(q, isCorrect, html) {
+function markCard(q, ok, html) {
   answered[q.id] = true;
-  if (isCorrect) scores.correct++; else missed[q.id] = true;
-  updateReviewBtn();
-  document.getElementById('card-' + q.id).classList.add(isCorrect ? 'answered-correct' : 'answered-wrong');
+  if (ok) scores.correct++; else missed[q.id] = true;
+  document.getElementById('card-' + q.id).classList.add(ok ? 'answered-correct' : 'answered-wrong');
   const fb = document.getElementById('fb-' + q.id);
-  fb.className = 'feedback ' + (isCorrect ? 'correct-fb' : 'wrong-fb') + ' show';
+  fb.className = 'feedback ' + (ok ? 'correct-fb' : 'wrong-fb') + ' show';
   fb.innerHTML = html;
   updateStats();
 }
 
+// ----- multiple choice -----
 function answerQ(q, chosen) {
   if (answered[q.id]) return;
-  const isCorrect = chosen === q.correct;
+  const ok = chosen === q.correct;
   q.options.forEach((_, oi) => {
     const btn = document.getElementById('opt-' + q.id + '-' + oi);
     btn.disabled = true;
@@ -1139,14 +2217,20 @@ function answerQ(q, chosen) {
     else if (oi === chosen) btn.classList.add('wrong-ans');
   });
   const ans = `<strong>${letters[q.correct]}. ${esc(q.options[q.correct])}</strong>`;
-  finishCard(q, isCorrect, isCorrect ? `<strong>✓ Correct!</strong> ${ans}` : `<strong>✗ Incorrect.</strong> The answer is ${ans}`);
+  markCard(q, ok, ok ? `<strong>✓ Correct!</strong> ${ans}` : `<strong>✗ Incorrect.</strong> The answer is ${ans}`);
 }
-
+function toggleOpt(q, oi) {
+  if (answered[q.id]) return;
+  const set = selected[q.id] || (selected[q.id] = new Set());
+  if (set.has(oi)) set.delete(oi); else set.add(oi);
+  document.getElementById('opt-' + q.id + '-' + oi).classList.toggle('selected', set.has(oi));
+  document.getElementById('check-' + q.id).disabled = set.size === 0;
+}
 function checkMulti(q) {
   if (answered[q.id]) return;
   const set = selected[q.id] || new Set();
   const right = new Set(q.correct);
-  const isCorrect = set.size === right.size && [...set].every(i => right.has(i));
+  const ok = set.size === right.size && [...set].every(i => right.has(i));
   q.options.forEach((_, oi) => {
     const btn = document.getElementById('opt-' + q.id + '-' + oi);
     btn.disabled = true;
@@ -1156,7 +2240,45 @@ function checkMulti(q) {
   });
   document.getElementById('check-' + q.id).style.display = 'none';
   const ans = q.correct.map(i => `<strong>${letters[i]}. ${esc(q.options[i])}</strong>`).join(', ');
-  finishCard(q, isCorrect, isCorrect ? `<strong>✓ Correct!</strong> ${ans}` : `<strong>✗ Incorrect.</strong> The correct answers are ${ans}`);
+  markCard(q, ok, ok ? `<strong>✓ Correct!</strong> ${ans}` : `<strong>✗ Incorrect.</strong> The correct answers are ${ans}`);
+}
+
+// ----- typed -----
+function submitTyped(q) {
+  if (answered[q.id]) return;
+  const input = document.getElementById('in-' + q.id);
+  if (!input.value.trim()) { input.focus(); return; }
+  finishTyped(q, isCorrect(q, input.value), input.value.trim());
+}
+function revealQ(q) {
+  if (answered[q.id]) return;
+  finishTyped(q, false, document.getElementById('in-' + q.id).value.trim());
+}
+function finishTyped(q, ok, typed) {
+  const input = document.getElementById('in-' + q.id);
+  input.disabled = true;
+  if (!typed) input.placeholder = 'No answer given';
+  input.classList.add(ok ? 'in-correct' : typed ? 'in-wrong' : 'in-blank');
+  if (!ok) input.blur();
+  document.getElementById('check-' + q.id).style.display = 'none';
+  document.getElementById('show-' + q.id).style.display = 'none';
+  const ans = `<strong>${esc(q.typed.show)}</strong>`;
+  markCard(q, ok, ok ? `<strong>✓ Correct!</strong> ${ans}`
+    : `<strong>✗ Incorrect.</strong> The answer is ${ans}` + (typed ? ` <button class="override-btn" type="button">Count as correct</button>` : ''));
+  const ob = document.querySelector('#fb-' + q.id + ' .override-btn');
+  if (ob) ob.addEventListener('click', () => overrideQ(q));
+}
+// For when your wording was right but didn't match the answer key.
+function overrideQ(q) {
+  if (!missed[q.id]) return;
+  delete missed[q.id];
+  scores.correct++;
+  document.getElementById('card-' + q.id).classList.replace('answered-wrong', 'answered-correct');
+  document.getElementById('in-' + q.id).classList.replace('in-wrong', 'in-correct');
+  const fb = document.getElementById('fb-' + q.id);
+  fb.className = 'feedback correct-fb show';
+  fb.innerHTML = `<strong>✓ Counted as correct.</strong> <strong>${esc(q.typed.show)}</strong>`;
+  updateStats();
 }
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
@@ -1164,14 +2286,13 @@ function esc(s) { const d = document.createElement('div'); d.textContent = s; re
 function updateStats() {
   document.getElementById('answeredCount').textContent = Object.keys(answered).length;
   document.getElementById('scoreCount').textContent = scores.correct;
+  updateReviewBtn();
   updateProgress();
 }
-
 function updateProgress() {
   const pct = scores.total ? (Object.keys(answered).length / scores.total * 100) : 0;
   document.getElementById('progressFill').style.width = pct + '%';
 }
-
 function updateReviewBtn() {
   const btn = document.getElementById('reviewBtn');
   if (!btn) return;
@@ -1181,7 +2302,6 @@ function updateReviewBtn() {
   document.getElementById('reviewNote').textContent = n ? '' : 'Questions you miss will show up here to retry.';
 }
 
-// Pull only the questions missed in this round, keeping their sets and order.
 function reviewIncorrect() {
   if (!Object.keys(missed).length) return;
   if (!reviewing) fullView = view;
@@ -1191,7 +2311,6 @@ function reviewIncorrect() {
   reviewing = true;
   resetAll();
 }
-
 function exitReview() {
   view = fullView;
   reviewing = false;
@@ -1206,20 +2325,18 @@ function shuffled(arr) {
   }
   return a;
 }
-
-// Shuffle question order within each set and answer order within each question.
-// Each option keeps its original index, so the correct answer(s) are remapped exactly.
+// Shuffle question order within each set and answer-choice order within each question.
+// Each choice keeps its original index, so the correct answer(s) are remapped exactly.
 function shuffleAll() {
   reviewing = false;
   view = sections.map(sec => ({
     label: sec.label,
     questions: shuffled(sec.questions).map(q => {
       const order = shuffled(q.options.map((_, i) => i));
-      const options = order.map(i => q.options[i]);
       const correct = q.multi
         ? q.correct.map(c => order.indexOf(c)).sort((a, b) => a - b)
         : order.indexOf(q.correct);
-      return Object.assign({}, q, { options, correct });
+      return Object.assign({}, q, { options: order.map(i => q.options[i]), correct });
     })
   }));
   fullView = view;
@@ -1236,6 +2353,7 @@ function resetAll() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+syncModeButtons();
 buildExam();
 </script>
 </body>
